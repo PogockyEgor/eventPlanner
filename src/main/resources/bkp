@@ -1,0 +1,30 @@
+@Autowired
+    public UserRepository(JdbcTemplate jdbcTemplate) {
+        this.template = jdbcTemplate;
+    }
+
+    public User getUserById(int id) {
+        return (User) template.queryForObject("SELECT * FROM users WHERE id=?", new UserMapper(), id);
+    }
+
+    public ArrayList<User> getAllUsers() {
+        return (ArrayList<User>) template.query("SELECT * FROM users", new UserMapper());
+    }
+
+    public boolean createUser(User user) {
+        int result = template.update("INSERT INTO users (id, login, password, name, created, edited, is_deleted, birthday_date, email)" +
+                "VALUES (DEFAULT,?,?,?,?,?,DEFAULT,?,?)", user.getLogin(), user.getPassword(), user.getName(), new Date(new Date().getTime()),
+                new Date(new Date().getTime()), user.getBirthdate(), user.getEmail());
+        return result == 1;
+    }
+
+    public boolean updateUser(User user) {
+        int result = template.update("UPDATE users SET login=?, password=?, name=?, email=?, edited=? WHERE id=?",
+            user.getLogin(), user.getPassword(), user.getName(), user.getEmail(), new Date().getTime(), user.getId());
+        return result == 1;
+    }
+
+    public boolean deleteUser(int id) {
+        int result = template.update("UPDATE users SET is_deleted=true WHERE id=?", id);
+        return result == 1;
+    }
