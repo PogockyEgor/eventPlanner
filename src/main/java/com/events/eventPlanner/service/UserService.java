@@ -20,7 +20,7 @@ public class UserService {
     }
 
     public User getUserById(int id) {
-        return userRepository.findById(id).orElse(new User());
+        return userRepository.findById(id).orElse(null);
     }
 
     public ArrayList<User> getAllUsers() {

@@ -1,7 +1,9 @@
 package com.events.eventPlanner.controllers;
 
+import com.events.eventPlanner.domain.Place;
 import com.events.eventPlanner.domain.User;
-import com.events.eventPlanner.service.UserService;
+import com.events.eventPlanner.repository.PlaceRepository;
+import com.events.eventPlanner.service.PlaceService;
 import com.events.eventPlanner.utils.AppError;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -16,65 +18,67 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 
 @RestController
-@RequestMapping("/user")
-public class UserController {
-    UserService userService;
+@RequestMapping("/place")
+public class PlaceController {
+
+    PlaceService placeService;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public PlaceController(PlaceService placeService) {
+        this.placeService = placeService;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUserById(@PathVariable int id) {
-        User user = userService.getUserById(id);
-        if (user == null) {
-            return new ResponseEntity<>(new AppError("User with id = " + id + " not found",
+    public ResponseEntity<?> getPlace(@PathVariable int id){
+        Place place = placeService.getPlaceById(id);
+        if (place == null) {
+            logger.warn("Place with id = "+ id +" not found");
+            return new ResponseEntity<>(new AppError("place with id = " + id + " not found",
                     HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        return new ResponseEntity<>(place, HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllUsers() {
-        ArrayList<User> allUsers = userService.getAllUsers();
-        if (allUsers.isEmpty()) {
-            return new ResponseEntity<>(new AppError("Don't found any users",
+    public ResponseEntity<?> getAllPlaces() {
+        ArrayList<Place> allPlaces = placeService.getAllPlaces();
+        if (allPlaces.isEmpty()) {
+            return new ResponseEntity<>(new AppError("Don't found any places",
                     HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(allUsers, HttpStatus.OK);
+        return new ResponseEntity<>(allPlaces, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody @Valid User user, BindingResult bindingResult) {
+    public ResponseEntity<?> addPlace(@RequestBody @Valid Place place, BindingResult bindingResult){
         if (bindingResult.hasErrors()) {
             for (ObjectError o : bindingResult.getAllErrors()) {
                 logger.warn("We have bindingResult error : " + o);
             }
         }
-        if (userService.createUser(user) == null) {
-            return new ResponseEntity<>(new AppError("User was not created",
+        if (placeService.createPlace(place) == null) {
+            return new ResponseEntity<>(new AppError("Place was not created",
                     HttpStatus.NO_CONTENT.value()), HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PutMapping
-    public ResponseEntity<?> updateUser(@RequestBody @Valid User user, BindingResult bindingResult) {
+    public ResponseEntity<?> updatePlace(@RequestBody @Valid Place place, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             for (ObjectError o : bindingResult.getAllErrors()) {
                 logger.warn("We have bindingResult error : " + o);
             }
         }
-        userService.updateUser(user);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        placeService.updatePlace(place);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable int id) {
-        userService.deleteUser(id);
+    public ResponseEntity<?> deletePlace(@PathVariable int id) {
+        placeService.deletePlace(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

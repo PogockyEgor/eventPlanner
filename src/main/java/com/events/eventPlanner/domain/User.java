@@ -1,10 +1,8 @@
 package com.events.eventPlanner.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
-import org.springframework.stereotype.Component;
 import java.sql.Date;
 
 @Data
