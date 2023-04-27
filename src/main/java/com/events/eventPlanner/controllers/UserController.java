@@ -31,8 +31,9 @@ public class UserController {
     public ResponseEntity<?> getUserById(@PathVariable int id) {
         User user = userService.getUserById(id);
         if (user == null) {
-            return new ResponseEntity<>(new AppError("User with id = " + id + " not found",
-                    HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(
+                    new AppError("User with id = " + id + " not found", HttpStatus.NOT_FOUND.value()),
+                    HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
@@ -61,6 +62,15 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @PostMapping("/addEvent")
+    public ResponseEntity<?> addEventToUser(@RequestParam int eventID, @RequestParam int userID) {
+        if (userService.addEventToUser(eventID, userID) == 0) {
+            return new ResponseEntity<>(new AppError("Event was not added",
+                    HttpStatus.NO_CONTENT.value()), HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
     @PutMapping
     public ResponseEntity<?> updateUser(@RequestBody @Valid User user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -76,5 +86,14 @@ public class UserController {
     public ResponseEntity<?> deleteUser(@PathVariable int id) {
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @DeleteMapping("/deleteEvent")
+    public ResponseEntity<?> deleteEventFromUser(@RequestParam int eventID, @RequestParam int userID){
+        if (userService.deleteEventFromUser(eventID, userID) == 0) {
+            return new ResponseEntity<>(new AppError("Event was not deleted",
+                    HttpStatus.NO_CONTENT.value()), HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

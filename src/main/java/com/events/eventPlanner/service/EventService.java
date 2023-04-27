@@ -2,6 +2,7 @@ package com.events.eventPlanner.service;
 
 import com.events.eventPlanner.domain.DTO.EventDbDto;
 import com.events.eventPlanner.domain.DTO.EventRequestDto;
+import com.events.eventPlanner.domain.DTO.EventResponseDto;
 import com.events.eventPlanner.domain.Event;
 import com.events.eventPlanner.domain.Place;
 import com.events.eventPlanner.repository.EventRepository;
@@ -22,8 +23,11 @@ public class EventService {
         this.eventRepository = eventRepository;
     }
 
-    public Event getEventById(int id) {
-        return DtoMapper.fromEventDbDtoToEvent(eventRepository.findById(id).orElse(null));
+    public EventResponseDto getEventById(int id) {
+        Event event = DtoMapper.fromEventDbDtoToEvent(eventRepository.findById(id).orElse(null));
+        EventResponseDto eventResponseDto = DtoMapper.fromEventToEventResponseDto(event);
+        eventResponseDto.setCountOfVisitors(eventRepository.getCountOfUsersOnEvent(id));
+        return eventResponseDto;
     }
 
     public ArrayList<Event> getAllEvents() {
@@ -50,5 +54,10 @@ public class EventService {
     @Transactional
     public void deleteEvent(int id){
         eventRepository.deleteById(id);
+    }
+
+    @Transactional
+    public int getCountOfVisitors(int eventId){
+        return eventRepository.getCountOfUsersOnEvent(eventId);
     }
 }

@@ -33,6 +33,17 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    @Transactional
+    public int addEventToUser(int eventID, int userID){
+        Date createTime = new Date(System.currentTimeMillis());
+        return userRepository.addEventToUser(eventID, userID, createTime);
+    }
+
+    @Transactional
+    public int deleteEventFromUser(int eventID, int userID){
+        return userRepository.deleteEventFromUser(eventID, userID);
+    }
+
     public User updateUser(User user){
         user.setEdited(new Date(System.currentTimeMillis()));
         return userRepository.save(user);

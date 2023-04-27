@@ -2,6 +2,7 @@ package com.events.eventPlanner.utils;
 
 import com.events.eventPlanner.domain.DTO.EventDbDto;
 import com.events.eventPlanner.domain.DTO.EventRequestDto;
+import com.events.eventPlanner.domain.DTO.EventResponseDto;
 import com.events.eventPlanner.domain.DTO.PlaceDbDto;
 import com.events.eventPlanner.domain.Event;
 import com.events.eventPlanner.domain.Place;
@@ -115,5 +116,15 @@ public class DtoMapper {
         place.setEvents(null);
         event.setPlace(place);
         return event;
+    }
+
+    public static EventResponseDto fromEventToEventResponseDto(Event event){
+        EventResponseDto eventResponseDto = new EventResponseDto();
+        eventResponseDto.setId(event.getId());
+        eventResponseDto.setName(event.getName());
+        eventResponseDto.setDate(event.getDate());
+        eventResponseDto.setDescription(event.getDescription());
+        eventResponseDto.setPlace(event.getPlace());
+        return eventResponseDto;
     }
 }

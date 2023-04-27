@@ -1,6 +1,7 @@
 package com.events.eventPlanner.controllers;
 
 import com.events.eventPlanner.domain.DTO.EventRequestDto;
+import com.events.eventPlanner.domain.DTO.EventResponseDto;
 import com.events.eventPlanner.domain.Event;
 import com.events.eventPlanner.domain.Place;
 import com.events.eventPlanner.service.EventService;
@@ -33,21 +34,21 @@ public class EventController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getPlace(@PathVariable int id){
-        Event event = eventService.getEventById(id);
-        if (event == null) {
-            logger.warn("Place with id = "+ id +" not found");
+    public ResponseEntity<?> getEvent(@PathVariable int id){
+        EventResponseDto eventResponseDto = eventService.getEventById(id);
+        if (eventResponseDto == null) {
+            logger.warn("Event with id = "+ id +" not found");
             return new ResponseEntity<>(new AppError("event with id = " + id + " not found",
                     HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(event, HttpStatus.OK);
+        return new ResponseEntity<>(eventResponseDto, HttpStatus.OK);
     }
 
     @GetMapping
     public ResponseEntity<?> getAllEvents() {
         ArrayList<Event> allEvents = eventService.getAllEvents();
         if (allEvents.isEmpty()) {
-            return new ResponseEntity<>(new AppError("Don't found any places",
+            return new ResponseEntity<>(new AppError("Don't found any events",
                     HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(allEvents, HttpStatus.OK);
@@ -61,7 +62,7 @@ public class EventController {
             }
         }
         if (eventService.createEvent(eventRequestDto) == null) {
-            return new ResponseEntity<>(new AppError("Place was not created",
+            return new ResponseEntity<>(new AppError("Event was not created",
                     HttpStatus.NO_CONTENT.value()), HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -82,5 +83,15 @@ public class EventController {
     public ResponseEntity<?> deleteEvent(@PathVariable int id) {
         eventService.deleteEvent(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("countOfVisitors/{id}")
+    public ResponseEntity<?> getCountOfVisitors(@PathVariable int id){
+        long countOfVisitors = eventService.getCountOfVisitors(id);
+        if (countOfVisitors == 0) {
+            return new ResponseEntity<>(new AppError("event with id = " + id + " not found",
+                    HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(countOfVisitors, HttpStatus.OK);
     }
 }
