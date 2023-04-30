@@ -1,10 +1,8 @@
 package com.events.eventPlanner.controllers;
 
 import com.events.eventPlanner.domain.Place;
-import com.events.eventPlanner.domain.User;
-import com.events.eventPlanner.repository.PlaceRepository;
 import com.events.eventPlanner.service.PlaceService;
-import com.events.eventPlanner.utils.AppError;
+import com.events.eventPlanner.exceptions.AppError;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

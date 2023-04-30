@@ -1,8 +1,10 @@
 package com.events.eventPlanner.controllers;
 
+import com.events.eventPlanner.domain.DTO.UserResponseDto;
+import com.events.eventPlanner.domain.Event;
 import com.events.eventPlanner.domain.User;
 import com.events.eventPlanner.service.UserService;
-import com.events.eventPlanner.utils.AppError;
+import com.events.eventPlanner.exceptions.AppError;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,18 +31,18 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@PathVariable int id) {
-        User user = userService.getUserById(id);
-        if (user == null) {
+        UserResponseDto userResponseDto = userService.getUserById(id);
+        if (userResponseDto == null) {
             return new ResponseEntity<>(
                     new AppError("User with id = " + id + " not found", HttpStatus.NOT_FOUND.value()),
                     HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        return new ResponseEntity<>(userResponseDto, HttpStatus.OK);
     }
 
     @GetMapping
     public ResponseEntity<?> getAllUsers() {
-        ArrayList<User> allUsers = userService.getAllUsers();
+        ArrayList<UserResponseDto> allUsers = userService.getAllUsers();
         if (allUsers.isEmpty()) {
             return new ResponseEntity<>(new AppError("Don't found any users",
                     HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND);
@@ -50,11 +52,6 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody @Valid User user, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            for (ObjectError o : bindingResult.getAllErrors()) {
-                logger.warn("We have bindingResult error : " + o);
-            }
-        }
         if (userService.createUser(user) == null) {
             return new ResponseEntity<>(new AppError("User was not created",
                     HttpStatus.NO_CONTENT.value()), HttpStatus.NO_CONTENT);
@@ -68,31 +65,52 @@ public class UserController {
             return new ResponseEntity<>(new AppError("Event was not added",
                     HttpStatus.NO_CONTENT.value()), HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping
     public ResponseEntity<?> updateUser(@RequestBody @Valid User user, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            for (ObjectError o : bindingResult.getAllErrors()) {
-                logger.warn("We have bindingResult error : " + o);
-            }
+        if (userService.getUserById(user.getId()) == null) {
+            return new ResponseEntity<>(
+                    new AppError("User with id = " + user.getId() + " not found", HttpStatus.NOT_FOUND.value()),
+                    HttpStatus.NOT_FOUND);
         }
         userService.updateUser(user);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable int id) {
+        if (userService.getUserById(id) == null) {
+            return new ResponseEntity<>(
+                    new AppError("User with id = " + id + " not found", HttpStatus.NOT_FOUND.value()),
+                    HttpStatus.NOT_FOUND);
+        }
         userService.deleteUser(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/myEvents/{userId}")
+    public ResponseEntity<?> getAllEventsForUser(@PathVariable int userId){
+        if (userService.getUserById(userId) == null) {
+            return new ResponseEntity<>(
+                    new AppError("User with id = " + userId + " not found", HttpStatus.NOT_FOUND.value()),
+                    HttpStatus.NOT_FOUND);
+        }
+        ArrayList<Event> userEvents = userService.getAllEventsForUser(userId);
+        if (userEvents.isEmpty()){
+            return new ResponseEntity<>(
+                    new AppError("No events for this user", HttpStatus.NOT_FOUND.value()),
+                    HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(userEvents, HttpStatus.OK);
     }
 
     @DeleteMapping("/deleteEvent")
     public ResponseEntity<?> deleteEventFromUser(@RequestParam int eventID, @RequestParam int userID){
         if (userService.deleteEventFromUser(eventID, userID) == 0) {
             return new ResponseEntity<>(new AppError("Event was not deleted",
-                    HttpStatus.NO_CONTENT.value()), HttpStatus.NO_CONTENT);
+                    HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }

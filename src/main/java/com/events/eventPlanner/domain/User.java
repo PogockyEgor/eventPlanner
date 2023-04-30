@@ -1,8 +1,12 @@
 package com.events.eventPlanner.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.ToString;
+
 import java.sql.Date;
 
 @Data
@@ -13,6 +17,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_seq_gen")
     @SequenceGenerator(name="user_id_seq_gen", sequenceName = "users_id_seq", allocationSize = 1)
+    @Column(name = "id", nullable = false)
     private Integer id;
 
     @Column(name = "login")
@@ -26,12 +31,15 @@ public class User {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "created")
+    @JsonIgnore
+    @Column(name = "created", updatable = false)
     private Date created;
 
+    @JsonIgnore
     @Column(name = "edited")
     private Date edited;
 
+    @JsonIgnore
     @Column(name = "is_deleted")
     private boolean isDeleted;
 

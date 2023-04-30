@@ -1,11 +1,17 @@
 package com.events.eventPlanner.service;
 
+import com.events.eventPlanner.domain.DTO.EventDbDto;
+import com.events.eventPlanner.domain.DTO.UserResponseDto;
+import com.events.eventPlanner.domain.Event;
 import com.events.eventPlanner.domain.User;
+import com.events.eventPlanner.mappers.DtoMapper;
+import com.events.eventPlanner.repository.EventRepository;
 import com.events.eventPlanner.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.image.AreaAveragingScaleFilter;
 import java.sql.Date;
 import java.util.ArrayList;
 
@@ -13,18 +19,26 @@ import java.util.ArrayList;
 public class UserService {
 
     UserRepository userRepository;
+    EventRepository eventRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, EventRepository eventRepository) {
         this.userRepository = userRepository;
+        this.eventRepository = eventRepository;
     }
 
-    public User getUserById(int id) {
-        return userRepository.findById(id).orElse(null);
+    public UserResponseDto getUserById(int id) {
+        User user = userRepository.findById(id).orElseThrow();
+        return DtoMapper.fromUserToUserResponseDto(user);
     }
 
-    public ArrayList<User> getAllUsers() {
-        return (ArrayList<User>) userRepository.findAll();
+    public ArrayList<UserResponseDto> getAllUsers() {
+        ArrayList<User> users = (ArrayList<User>) userRepository.findAll();
+        ArrayList<UserResponseDto> userResponseDtos = new ArrayList<>();
+        for (User u: users){
+            userResponseDtos.add(DtoMapper.fromUserToUserResponseDto(u));
+        }
+        return userResponseDtos;
     }
 
     public User createUser(User user) {
@@ -37,6 +51,14 @@ public class UserService {
     public int addEventToUser(int eventID, int userID){
         Date createTime = new Date(System.currentTimeMillis());
         return userRepository.addEventToUser(eventID, userID, createTime);
+    }
+
+    public ArrayList<Event> getAllEventsForUser(int userId){
+        ArrayList<Event> events = new ArrayList<>();
+        for (EventDbDto e: eventRepository.getAllEventsForUser(userId)){
+            events.add(DtoMapper.fromEventDbDtoToEvent(e));
+        }
+        return events;
     }
 
     @Transactional

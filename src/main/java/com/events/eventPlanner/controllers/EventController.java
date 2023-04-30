@@ -2,11 +2,11 @@ package com.events.eventPlanner.controllers;
 
 import com.events.eventPlanner.domain.DTO.EventRequestDto;
 import com.events.eventPlanner.domain.DTO.EventResponseDto;
+import com.events.eventPlanner.domain.DTO.UserResponseDto;
 import com.events.eventPlanner.domain.Event;
-import com.events.eventPlanner.domain.Place;
+import com.events.eventPlanner.domain.User;
 import com.events.eventPlanner.service.EventService;
-import com.events.eventPlanner.service.PlaceService;
-import com.events.eventPlanner.utils.AppError;
+import com.events.eventPlanner.exceptions.AppError;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,5 +93,21 @@ public class EventController {
                     HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(countOfVisitors, HttpStatus.OK);
+    }
+
+    @GetMapping("/visitors/{eventId}")
+    public ResponseEntity<?> getUserOfEvent(@PathVariable int eventId){
+        if (eventService.getEventById(eventId) == null) {
+            logger.warn("Event with id = "+ eventId +" not found");
+            return new ResponseEntity<>(new AppError("event with id = " + eventId + " not found",
+                    HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND);
+        }
+        ArrayList<UserResponseDto> visitors = eventService.getUsersForEvent(eventId);
+        if (visitors.isEmpty()){
+            return new ResponseEntity<>(
+                    new AppError("No events for this user", HttpStatus.NOT_FOUND.value()),
+                    HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(visitors, HttpStatus.OK);
     }
 }

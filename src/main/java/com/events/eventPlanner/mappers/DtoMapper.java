@@ -1,18 +1,14 @@
-package com.events.eventPlanner.utils;
+package com.events.eventPlanner.mappers;
 
-import com.events.eventPlanner.domain.DTO.EventDbDto;
-import com.events.eventPlanner.domain.DTO.EventRequestDto;
-import com.events.eventPlanner.domain.DTO.EventResponseDto;
-import com.events.eventPlanner.domain.DTO.PlaceDbDto;
+import com.events.eventPlanner.domain.DTO.*;
 import com.events.eventPlanner.domain.Event;
 import com.events.eventPlanner.domain.Place;
+import com.events.eventPlanner.domain.User;
 import com.events.eventPlanner.repository.PlaceRepository;
-import com.events.eventPlanner.service.PlaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
-import java.util.Optional;
 
 @Component
 public class DtoMapper {
@@ -126,5 +122,14 @@ public class DtoMapper {
         eventResponseDto.setDescription(event.getDescription());
         eventResponseDto.setPlace(event.getPlace());
         return eventResponseDto;
+    }
+
+    public static UserResponseDto fromUserToUserResponseDto(User user){
+        UserResponseDto userResponseDto = new UserResponseDto();
+        userResponseDto.setName(user.getName());
+        userResponseDto.setCreated(user.getCreated());
+        userResponseDto.setBirthdate(user.getBirthdate());
+        userResponseDto.setEmail(user.getEmail());
+        return userResponseDto;
     }
 }

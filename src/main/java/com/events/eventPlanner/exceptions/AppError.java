@@ -1,4 +1,4 @@
-package com.events.eventPlanner.utils;
+package com.events.eventPlanner.exceptions;
 
 import lombok.Getter;
 import lombok.Setter;

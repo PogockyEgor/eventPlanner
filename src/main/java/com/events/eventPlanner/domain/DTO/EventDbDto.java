@@ -15,6 +15,7 @@ import java.sql.Date;
 public class EventDbDto {
 
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "place_id_seq_gen")
     @SequenceGenerator(name = "place_id_seq_gen", sequenceName = "place_id_seq", allocationSize = 1)
     private Integer id;

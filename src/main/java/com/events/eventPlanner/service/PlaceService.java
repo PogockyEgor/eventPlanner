@@ -1,11 +1,9 @@
 package com.events.eventPlanner.service;
 
-import com.events.eventPlanner.domain.DTO.EventDbDto;
 import com.events.eventPlanner.domain.DTO.PlaceDbDto;
-import com.events.eventPlanner.domain.Event;
 import com.events.eventPlanner.domain.Place;
 import com.events.eventPlanner.repository.PlaceRepository;
-import com.events.eventPlanner.utils.DtoMapper;
+import com.events.eventPlanner.mappers.DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
