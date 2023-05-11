@@ -2,19 +2,14 @@ package com.events.eventPlanner.exceptions;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.ValidationException;
-import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.sql.SQLException;
-import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -47,6 +42,6 @@ public class ExceptionResolver {
     public ResponseEntity<?> nullPointerHandler(NoSuchElementException e){
         logger.warn("Передано значение null: " + e.fillInStackTrace());
         return new ResponseEntity<>(new AppError("Искомый объект не найден",
-                HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
+                HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND);
     }
 }

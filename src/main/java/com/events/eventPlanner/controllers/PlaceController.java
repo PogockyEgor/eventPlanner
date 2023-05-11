@@ -1,8 +1,8 @@
 package com.events.eventPlanner.controllers;
 
 import com.events.eventPlanner.domain.Place;
-import com.events.eventPlanner.service.PlaceService;
 import com.events.eventPlanner.exceptions.AppError;
+import com.events.eventPlanner.service.PlaceService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,10 +29,11 @@ public class PlaceController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getPlace(@PathVariable int id){
+    public ResponseEntity<?> getPlace(@PathVariable int id) {
+        logger.info("get request to /place/id");
         Place place = placeService.getPlaceById(id);
         if (place == null) {
-            logger.warn("Place with id = "+ id +" not found");
+            logger.warn("Place with id = " + id + " not found");
             return new ResponseEntity<>(new AppError("place with id = " + id + " not found",
                     HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND);
         }
@@ -41,6 +42,7 @@ public class PlaceController {
 
     @GetMapping
     public ResponseEntity<?> getAllPlaces() {
+        logger.info("get request to /place");
         ArrayList<Place> allPlaces = placeService.getAllPlaces();
         if (allPlaces.isEmpty()) {
             return new ResponseEntity<>(new AppError("Don't found any places",
@@ -50,12 +52,8 @@ public class PlaceController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addPlace(@RequestBody @Valid Place place, BindingResult bindingResult){
-        if (bindingResult.hasErrors()) {
-            for (ObjectError o : bindingResult.getAllErrors()) {
-                logger.warn("We have bindingResult error : " + o);
-            }
-        }
+    public ResponseEntity<?> addPlace(@RequestBody @Valid Place place) {
+        logger.info("post request to /place");
         if (placeService.createPlace(place) == null) {
             return new ResponseEntity<>(new AppError("Place was not created",
                     HttpStatus.NO_CONTENT.value()), HttpStatus.NO_CONTENT);
@@ -64,18 +62,23 @@ public class PlaceController {
     }
 
     @PutMapping
-    public ResponseEntity<?> updatePlace(@RequestBody @Valid Place place, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            for (ObjectError o : bindingResult.getAllErrors()) {
-                logger.warn("We have bindingResult error : " + o);
-            }
+    public ResponseEntity<?> updatePlace(@RequestBody @Valid Place place) {
+        logger.info("put request to /place");
+        if (placeService.getPlaceById(place.getId()) == null) {
+            return new ResponseEntity<>(
+                    new AppError("Place with id = " + place.getId() + " not found", HttpStatus.NOT_FOUND.value()),
+                    HttpStatus.NOT_FOUND);
         }
-        placeService.updatePlace(place);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(placeService.updatePlace(place), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePlace(@PathVariable int id) {
+        if (placeService.getPlaceById(id) == null) {
+            return new ResponseEntity<>(
+                    new AppError("Place with id = " + id + " not found", HttpStatus.NOT_FOUND.value()),
+                    HttpStatus.NOT_FOUND);
+        }
         placeService.deletePlace(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

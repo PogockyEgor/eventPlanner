@@ -26,6 +26,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     int deleteEventFromUser(int eventID, int userID);
 
 
-    @Query(nativeQuery = true, value = "SELECT users.id, name, login, password, birthday_date, created, email FROM users INNER JOIN l_users_events lue on users.id = lue.user_id WHERE event_id=:eventId")
+    @Query(nativeQuery = true, value = "SELECT users.id, name, login, password, birthday_date, created, email, edited, is_deleted FROM users INNER JOIN l_users_events lue on users.id = lue.user_id WHERE event_id=:eventId")
     ArrayList<User> getAllUsersForEvent(int eventId);
 }

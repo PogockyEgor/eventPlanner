@@ -4,9 +4,8 @@ import com.events.eventPlanner.domain.DTO.EventRequestDto;
 import com.events.eventPlanner.domain.DTO.EventResponseDto;
 import com.events.eventPlanner.domain.DTO.UserResponseDto;
 import com.events.eventPlanner.domain.Event;
-import com.events.eventPlanner.domain.User;
-import com.events.eventPlanner.service.EventService;
 import com.events.eventPlanner.exceptions.AppError;
+import com.events.eventPlanner.service.EventService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -34,10 +31,10 @@ public class EventController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getEvent(@PathVariable int id){
+    public ResponseEntity<?> getEvent(@PathVariable int id) {
         EventResponseDto eventResponseDto = eventService.getEventById(id);
         if (eventResponseDto == null) {
-            logger.warn("Event with id = "+ id +" not found");
+            logger.warn("Event with id = " + id + " not found");
             return new ResponseEntity<>(new AppError("event with id = " + id + " not found",
                     HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND);
         }
@@ -55,12 +52,7 @@ public class EventController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addEvent(@RequestBody @Valid EventRequestDto eventRequestDto, BindingResult bindingResult){
-        if (bindingResult.hasErrors()) {
-            for (ObjectError o : bindingResult.getAllErrors()) {
-                logger.warn("We have bindingResult error : " + o);
-            }
-        }
+    public ResponseEntity<?> addEvent(@RequestBody @Valid EventRequestDto eventRequestDto) {
         if (eventService.createEvent(eventRequestDto) == null) {
             return new ResponseEntity<>(new AppError("Event was not created",
                     HttpStatus.NO_CONTENT.value()), HttpStatus.NO_CONTENT);
@@ -69,11 +61,12 @@ public class EventController {
     }
 
     @PutMapping
-    public ResponseEntity<?> updateEvent(@RequestBody @Valid EventRequestDto eventRequestDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            for (ObjectError o : bindingResult.getAllErrors()) {
-                logger.warn("We have bindingResult error : " + o);
-            }
+    public ResponseEntity<?> updateEvent(@RequestBody @Valid EventRequestDto eventRequestDto) {
+        logger.info("put request to /event");
+        if (eventService.getEventById(eventRequestDto.getId()) == null) {
+            return new ResponseEntity<>(
+                    new AppError("Event with id = " + eventRequestDto.getId() + " not found", HttpStatus.NOT_FOUND.value()),
+                    HttpStatus.NOT_FOUND);
         }
         eventService.updateEvent(eventRequestDto);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -86,7 +79,7 @@ public class EventController {
     }
 
     @GetMapping("countOfVisitors/{id}")
-    public ResponseEntity<?> getCountOfVisitors(@PathVariable int id){
+    public ResponseEntity<?> getCountOfVisitors(@PathVariable int id) {
         long countOfVisitors = eventService.getCountOfVisitors(id);
         if (countOfVisitors == 0) {
             return new ResponseEntity<>(new AppError("event with id = " + id + " not found",
@@ -96,14 +89,14 @@ public class EventController {
     }
 
     @GetMapping("/visitors/{eventId}")
-    public ResponseEntity<?> getUserOfEvent(@PathVariable int eventId){
+    public ResponseEntity<?> getUserOfEvent(@PathVariable int eventId) {
         if (eventService.getEventById(eventId) == null) {
-            logger.warn("Event with id = "+ eventId +" not found");
+            logger.warn("Event with id = " + eventId + " not found");
             return new ResponseEntity<>(new AppError("event with id = " + eventId + " not found",
                     HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND);
         }
         ArrayList<UserResponseDto> visitors = eventService.getUsersForEvent(eventId);
-        if (visitors.isEmpty()){
+        if (visitors.isEmpty()) {
             return new ResponseEntity<>(
                     new AppError("No events for this user", HttpStatus.NOT_FOUND.value()),
                     HttpStatus.NOT_FOUND);
