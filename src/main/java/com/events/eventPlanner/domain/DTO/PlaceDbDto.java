@@ -23,6 +23,9 @@ public class PlaceDbDto {
     @SequenceGenerator(name = "place_id_seq_gen", sequenceName = "place_id_seq", allocationSize = 1)
     private Integer id;
 
+    @Column(name = "name")
+    private String name;
+
     @Column(name = "address")
     private String address;
 

@@ -20,7 +20,7 @@ public class DtoMapper {
         DtoMapper.placeRepository = placeRepository;
     }
 
-    public static EventDbDto fromEventToEventDbDto(Event event){
+    public static EventDbDto fromEventToEventDbDto(Event event) {
         EventDbDto eventDbDto = new EventDbDto();
         eventDbDto.setId(event.getId());
         eventDbDto.setName(event.getName());
@@ -37,14 +37,15 @@ public class DtoMapper {
         return eventDbDto;
     }
 
-    public static PlaceDbDto fromPlaceToPlaceDbDto(Place place){
+    public static PlaceDbDto fromPlaceToPlaceDbDto(Place place) {
         PlaceDbDto placeDbDto = new PlaceDbDto();
         placeDbDto.setId(place.getId());
+        placeDbDto.setName(place.getName());
         placeDbDto.setAddress(place.getAddress());
         placeDbDto.setDistrict(place.getDistrict());
         placeDbDto.setDescription(place.getDescription());
         placeDbDto.setRating(place.getRating());
-        HashSet<EventDbDto> eventDbDtos = new HashSet<>();
+        HashSet<EventDbDto> eventsDbDto = new HashSet<>();
         for (Event e : place.getEvents()) {
             EventDbDto edd = new EventDbDto();
             edd.setId(e.getId());
@@ -52,13 +53,13 @@ public class DtoMapper {
             edd.setDescription(e.getDescription());
             edd.setDate(e.getDate());
             edd.setPlace(null);
-            eventDbDtos.add(edd);
+            eventsDbDto.add(edd);
         }
-        placeDbDto.setEvents(eventDbDtos);
+        placeDbDto.setEvents(eventsDbDto);
         return placeDbDto;
     }
 
-    public static Event fromEventDbDtoToEvent(EventDbDto eventDbDto){
+    public static Event fromEventDbDtoToEvent(EventDbDto eventDbDto) {
         Event event = new Event();
         event.setId(eventDbDto.getId());
         event.setName(eventDbDto.getName());
@@ -75,34 +76,35 @@ public class DtoMapper {
         return event;
     }
 
-    public static Place fromPlaceDbDtoToPlace(PlaceDbDto placeDbDto){
+    public static Place fromPlaceDbDtoToPlace(PlaceDbDto placeDbDto) {
         Place place = new Place();
         place.setId(placeDbDto.getId());
+        place.setName(placeDbDto.getName());
         place.setAddress(placeDbDto.getAddress());
         place.setDistrict(placeDbDto.getDistrict());
         place.setDescription(placeDbDto.getDescription());
         place.setRating(placeDbDto.getRating());
-        HashSet<Event> events = new HashSet<Event>();
-        for (EventDbDto edd: placeDbDto.getEvents()) {
-        Event event = new Event();
-        event.setId(edd.getId());
-        event.setDate(edd.getDate());
-        event.setDescription(edd.getDescription());
-        event.setName(edd.getName());
-        event.setPlace(null);
-        events.add(event);
+        HashSet<Event> events = new HashSet<>();
+        for (EventDbDto edd : placeDbDto.getEvents()) {
+            Event event = new Event();
+            event.setId(edd.getId());
+            event.setDate(edd.getDate());
+            event.setDescription(edd.getDescription());
+            event.setName(edd.getName());
+            event.setPlace(null);
+            events.add(event);
         }
         place.setEvents(events);
         return place;
     }
 
-    public static Event fromEventRequestDtoToEvent(EventRequestDto eventRequestDto){
+    public static Event fromEventRequestDtoToEvent(EventRequestDto eventRequestDto) {
         Event event = new Event();
         event.setId(eventRequestDto.getId());
         event.setName(eventRequestDto.getName());
         event.setDescription(eventRequestDto.getDescription());
         event.setDate(eventRequestDto.getDate());
-        PlaceDbDto placeDbDto = placeRepository.findById(eventRequestDto.getPlaceID()).get();
+        PlaceDbDto placeDbDto = placeRepository.findById(eventRequestDto.getPlaceID()).orElseThrow();
         Place place = new Place();
         place.setId(placeDbDto.getId());
         place.setAddress(placeDbDto.getAddress());
@@ -114,7 +116,7 @@ public class DtoMapper {
         return event;
     }
 
-    public static EventResponseDto fromEventToEventResponseDto(Event event){
+    public static EventResponseDto fromEventToEventResponseDto(Event event) {
         EventResponseDto eventResponseDto = new EventResponseDto();
         eventResponseDto.setId(event.getId());
         eventResponseDto.setName(event.getName());
@@ -124,7 +126,7 @@ public class DtoMapper {
         return eventResponseDto;
     }
 
-    public static UserResponseDto fromUserToUserResponseDto(User user){
+    public static UserResponseDto fromUserToUserResponseDto(User user) {
         UserResponseDto userResponseDto = new UserResponseDto();
         userResponseDto.setName(user.getName());
         userResponseDto.setCreated(user.getCreated());

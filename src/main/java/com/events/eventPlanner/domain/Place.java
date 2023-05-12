@@ -9,6 +9,7 @@ import java.util.Set;
 public class Place {
 
     private Integer id;
+    private String name;
     private String address;
     private String district;
     private String description;

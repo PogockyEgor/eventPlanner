@@ -32,6 +32,7 @@ public class EventController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getEvent(@PathVariable int id) {
+        logger.info("get request to /event/id");
         EventResponseDto eventResponseDto = eventService.getEventById(id);
         if (eventResponseDto == null) {
             logger.warn("Event with id = " + id + " not found");
@@ -43,6 +44,7 @@ public class EventController {
 
     @GetMapping
     public ResponseEntity<?> getAllEvents() {
+        logger.info("get request to /event");
         ArrayList<Event> allEvents = eventService.getAllEvents();
         if (allEvents.isEmpty()) {
             return new ResponseEntity<>(new AppError("Don't found any events",
@@ -53,6 +55,7 @@ public class EventController {
 
     @PostMapping
     public ResponseEntity<?> addEvent(@RequestBody @Valid EventRequestDto eventRequestDto) {
+        logger.info("post request to /event");
         if (eventService.createEvent(eventRequestDto) == null) {
             return new ResponseEntity<>(new AppError("Event was not created",
                     HttpStatus.NO_CONTENT.value()), HttpStatus.NO_CONTENT);
@@ -68,18 +71,33 @@ public class EventController {
                     new AppError("Event with id = " + eventRequestDto.getId() + " not found", HttpStatus.NOT_FOUND.value()),
                     HttpStatus.NOT_FOUND);
         }
-        eventService.updateEvent(eventRequestDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(eventService.updateEvent(eventRequestDto), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteEvent(@PathVariable int id) {
+        logger.info("delete request to /event/id");
+        if (eventService.getEventById(id) == null) {
+            return new ResponseEntity<>(
+                    new AppError("User with id = " + id + " not found", HttpStatus.NOT_FOUND.value()),
+                    HttpStatus.NOT_FOUND);
+        }
         eventService.deleteEvent(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @DeleteMapping("/pastEvents")
+    public ResponseEntity<?> deletePastEvents(){
+        logger.info("delete request to /events/pastEvents");
+        if (eventService.deletePastEvents()==0){
+            return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping("countOfVisitors/{id}")
     public ResponseEntity<?> getCountOfVisitors(@PathVariable int id) {
+        logger.info("get request to /event/countOfVisitors");
         long countOfVisitors = eventService.getCountOfVisitors(id);
         if (countOfVisitors == 0) {
             return new ResponseEntity<>(new AppError("event with id = " + id + " not found",
@@ -90,6 +108,7 @@ public class EventController {
 
     @GetMapping("/visitors/{eventId}")
     public ResponseEntity<?> getUserOfEvent(@PathVariable int eventId) {
+        logger.info("get request to /event/visitors");
         if (eventService.getEventById(eventId) == null) {
             logger.warn("Event with id = " + eventId + " not found");
             return new ResponseEntity<>(new AppError("event with id = " + eventId + " not found",

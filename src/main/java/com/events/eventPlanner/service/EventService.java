@@ -68,6 +68,11 @@ public class EventService {
     }
 
     @Transactional
+    public int deletePastEvents(){
+        return eventRepository.deletePastEvents();
+    }
+
+    @Transactional
     public int getCountOfVisitors(int eventId){
         return eventRepository.getCountOfUsersOnEvent(eventId);
     }
