@@ -25,7 +25,7 @@ public class User {
     private String login;
 
     @Column(name = "password")
-    @Size(min = 8, max = 16)
+    //@Size(min = 8, max = 16)
     private String password;
 
     @Column(name = "name")
@@ -50,4 +50,7 @@ public class User {
     @Column(name = "email")
     @Email
     private String email;
+
+    @Column(name = "role")
+    private String role;
 }

@@ -7,7 +7,9 @@ import com.events.eventPlanner.domain.User;
 import com.events.eventPlanner.mappers.DtoMapper;
 import com.events.eventPlanner.repository.EventRepository;
 import com.events.eventPlanner.repository.UserRepository;
+import com.events.eventPlanner.security.SecurityConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,11 +22,13 @@ public class UserService {
 
     UserRepository userRepository;
     EventRepository eventRepository;
+    PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, EventRepository eventRepository) {
+    public UserService(UserRepository userRepository, EventRepository eventRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.eventRepository = eventRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public UserResponseDto getUserById(int id) {
@@ -44,6 +48,8 @@ public class UserService {
     public User createUser(User user) {
         user.setCreated(new Date(System.currentTimeMillis()));
         user.setEdited(new Date(System.currentTimeMillis()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole("user");
         return userRepository.save(user);
     }
 

@@ -1,8 +1,10 @@
 package com.events.eventPlanner.controllers;
 
+import com.events.eventPlanner.domain.Event;
 import com.events.eventPlanner.domain.Place;
 import com.events.eventPlanner.exceptions.AppError;
 import com.events.eventPlanner.service.PlaceService;
+import com.events.eventPlanner.service.UserService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,12 +22,14 @@ import java.util.ArrayList;
 public class PlaceController {
 
     PlaceService placeService;
+    UserService userService;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    public PlaceController(PlaceService placeService) {
+    public PlaceController(PlaceService placeService, UserService userService) {
         this.placeService = placeService;
+        this.userService = userService;
     }
 
     @GetMapping("/{id}")
@@ -70,6 +74,23 @@ public class PlaceController {
                     HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(placeService.updatePlace(place), HttpStatus.OK);
+    }
+
+    @PutMapping("/admin")
+    public ResponseEntity<?> appointAdmin(@RequestParam int placeId, @RequestParam int userId) {
+        logger.info("put request to /place/admin");
+        if (placeService.getPlaceById(placeId) == null) {
+            return new ResponseEntity<>(
+                    new AppError("Place with id = " + placeId + " not found", HttpStatus.NOT_FOUND.value()),
+                    HttpStatus.NOT_FOUND);
+        }
+        if (userService.getUserById(userId) == null) {
+            return new ResponseEntity<>(
+                    new AppError("User with id = " + userId + "not found", HttpStatus.NOT_FOUND.value()),
+                    HttpStatus.NOT_FOUND);
+        }
+        placeService.appointAdmin(userId, placeId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
