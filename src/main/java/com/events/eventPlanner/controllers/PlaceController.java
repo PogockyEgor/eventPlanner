@@ -1,7 +1,7 @@
 package com.events.eventPlanner.controllers;
 
-import com.events.eventPlanner.domain.Event;
 import com.events.eventPlanner.domain.Place;
+import com.events.eventPlanner.domain.User;
 import com.events.eventPlanner.exceptions.AppError;
 import com.events.eventPlanner.service.PlaceService;
 import com.events.eventPlanner.service.UserService;
@@ -11,11 +11,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/place")
@@ -68,6 +68,13 @@ public class PlaceController {
     @PutMapping
     public ResponseEntity<?> updatePlace(@RequestBody @Valid Place place) {
         logger.info("put request to /place");
+        User user = userService.findUserByLogin(SecurityContextHolder.getContext().getAuthentication().getName());
+        if (!Objects.equals(user.getRole(), "admin")) {
+            if (user.getId() != placeService.getAdminOfPlace(place.getId())) {
+                return new ResponseEntity<>(new AppError("You are not admin of this place",
+                        HttpStatus.FORBIDDEN.value()), HttpStatus.FORBIDDEN);
+            }
+        }
         if (placeService.getPlaceById(place.getId()) == null) {
             return new ResponseEntity<>(
                     new AppError("Place with id = " + place.getId() + " not found", HttpStatus.NOT_FOUND.value()),

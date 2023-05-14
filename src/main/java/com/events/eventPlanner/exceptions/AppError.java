@@ -1,16 +1,11 @@
 package com.events.eventPlanner.exceptions;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.http.HttpStatusCode;
-@Setter
-@Getter
+import lombok.Data;
+
+@Data
 public class AppError {
     private String errorMessage;
     private int httpStatusCode;
-
-    public AppError() {
-    }
 
     public AppError(String errorMessage, int httpStatusCode) {
         this.errorMessage = errorMessage;

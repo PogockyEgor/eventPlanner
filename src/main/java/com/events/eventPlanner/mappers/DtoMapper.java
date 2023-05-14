@@ -1,6 +1,10 @@
 package com.events.eventPlanner.mappers;
 
-import com.events.eventPlanner.domain.DTO.*;
+import com.events.eventPlanner.domain.DTO.EventDbDto;
+import com.events.eventPlanner.domain.DTO.EventRequestDto;
+import com.events.eventPlanner.domain.DTO.EventResponseDto;
+import com.events.eventPlanner.domain.DTO.PlaceDbDto;
+import com.events.eventPlanner.domain.DTO.UserResponseDto;
 import com.events.eventPlanner.domain.Event;
 import com.events.eventPlanner.domain.Place;
 import com.events.eventPlanner.domain.User;
@@ -67,6 +71,7 @@ public class DtoMapper {
         event.setDate(eventDbDto.getDate());
         Place place = new Place();
         place.setId(eventDbDto.getPlace().getId());
+        place.setName(eventDbDto.getName());
         place.setAddress(eventDbDto.getPlace().getAddress());
         place.setDescription(eventDbDto.getPlace().getDescription());
         place.setDistrict(eventDbDto.getPlace().getDistrict());

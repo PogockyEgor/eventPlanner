@@ -20,17 +20,17 @@ public class ExceptionResolver {
 
     @ExceptionHandler(DataAccessException.class)
     public ResponseEntity<AppError> dataAccessHandler(DataAccessException e) {
-        logger.warn("Ошибка при заполнении формы: "+ e.getMostSpecificCause());
+        logger.warn("Ошибка при заполнении формы: " + e.getMostSpecificCause());
         return new ResponseEntity<>(new AppError("Неверно заполнена форма, " + e.getMostSpecificCause().getLocalizedMessage(),
                 HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<?> validationHandler(ConstraintViolationException e){
+    public ResponseEntity<?> validationHandler(ConstraintViolationException e) {
         logger.warn("Ошибка валидации: " + e.getConstraintViolations());
         StringBuilder errorMessage = new StringBuilder("Ошибка заполнения данных: \n");
         Set<ConstraintViolation<?>> hashSet = e.getConstraintViolations();
-        for (ConstraintViolation c:hashSet) {
+        for (ConstraintViolation c : hashSet) {
             errorMessage.append("Ошибка в поле ").append(c.getPropertyPath());
             errorMessage.append(", ").append(c.getMessage()).append(".\n");
         }
@@ -39,7 +39,7 @@ public class ExceptionResolver {
     }
 
     @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<?> nullPointerHandler(NoSuchElementException e){
+    public ResponseEntity<?> nullPointerHandler(NoSuchElementException e) {
         logger.warn("Передано значение null: " + e.fillInStackTrace());
         return new ResponseEntity<>(new AppError("Искомый объект не найден",
                 HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND);

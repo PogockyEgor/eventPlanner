@@ -12,4 +12,7 @@ public interface PlaceRepository extends JpaRepository<PlaceDbDto, Integer> {
     @Modifying
     @Query(nativeQuery = true, value = "UPDATE place SET admin_id =:userId WHERE id=:eventId")
     void appointAdmin(int userId, int eventId);
+
+    @Query(nativeQuery = true, value = "SELECT admin_id FROM place WHERE id=:placeId")
+    int getAdminOfPlace(int placeId);
 }
