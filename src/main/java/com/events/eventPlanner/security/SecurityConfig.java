@@ -40,8 +40,10 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/place/admin").hasRole("admin")
                 .requestMatchers(HttpMethod.DELETE, "/place/**").hasRole("admin")
 
-                .requestMatchers(HttpMethod.GET, "/event/visitors").hasAnyRole("admin", "placeAdmin")
-                .requestMatchers(HttpMethod.GET, "/event/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/event").permitAll()
+                .requestMatchers(HttpMethod.GET, "/event/{id}").permitAll()
+                .requestMatchers(HttpMethod.GET, "/event/countOfVisitors/{id}").permitAll()
+                .requestMatchers(HttpMethod.GET, "/event/visitors/{id}").hasAnyRole("admin", "placeAdmin")
                 .requestMatchers(HttpMethod.POST, "/event").hasAnyRole("admin", "placeAdmin")
                 .requestMatchers(HttpMethod.PUT, "/event").hasAnyRole("admin", "placeAdmin")
                 .requestMatchers(HttpMethod.DELETE, "/event").hasAnyRole("admin", "placeAdmin")

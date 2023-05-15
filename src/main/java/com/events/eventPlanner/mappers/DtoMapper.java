@@ -71,7 +71,7 @@ public class DtoMapper {
         event.setDate(eventDbDto.getDate());
         Place place = new Place();
         place.setId(eventDbDto.getPlace().getId());
-        place.setName(eventDbDto.getName());
+        place.setName(eventDbDto.getPlace().getName());
         place.setAddress(eventDbDto.getPlace().getAddress());
         place.setDescription(eventDbDto.getPlace().getDescription());
         place.setDistrict(eventDbDto.getPlace().getDistrict());

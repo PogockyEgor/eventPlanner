@@ -31,7 +31,6 @@ public class User {
     private String login;
 
     @Column(name = "password")
-    //@Size(min = 8, max = 16)
     private String password;
 
     @Column(name = "name")
@@ -57,6 +56,7 @@ public class User {
     @Email
     private String email;
 
-    @Column(name = "role")
+    @JsonIgnore
+    @Column(name = "role", updatable = false)
     private String role;
 }

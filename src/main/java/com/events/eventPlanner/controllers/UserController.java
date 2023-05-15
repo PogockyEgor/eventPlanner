@@ -43,7 +43,7 @@ public class UserController {
         logger.info("get request to /user/id");
         User user = userService.findUserByLogin(SecurityContextHolder.getContext().getAuthentication().getName());
         if(!Objects.equals(user.getRole(), "admin")){
-            if (user.getId().equals(id)){
+            if (!user.getId().equals(id)){
                 return new ResponseEntity<>(new AppError("You are not this user",
                         HttpStatus.FORBIDDEN.value()), HttpStatus.FORBIDDEN);
             }
@@ -83,7 +83,7 @@ public class UserController {
         logger.info("post request to /user/addEvent");
         User user = userService.findUserByLogin(SecurityContextHolder.getContext().getAuthentication().getName());
         if(!Objects.equals(user.getRole(), "admin")){
-            if (user.getId().equals(userId)){
+            if (!user.getId().equals(userId)){
                 return new ResponseEntity<>(new AppError("You are not this user",
                         HttpStatus.FORBIDDEN.value()), HttpStatus.FORBIDDEN);
             }
@@ -100,7 +100,7 @@ public class UserController {
         logger.info("put request to /user");
         User secureUser = userService.findUserByLogin(SecurityContextHolder.getContext().getAuthentication().getName());
         if(!Objects.equals(user.getRole(), "admin")){
-            if (secureUser.getId().equals(user.getId())){
+            if (!secureUser.getId().equals(user.getId())){
                 return new ResponseEntity<>(new AppError("You are not this user",
                         HttpStatus.FORBIDDEN.value()), HttpStatus.FORBIDDEN);
             }
@@ -118,7 +118,7 @@ public class UserController {
         logger.info("delete request to /user");
         User user = userService.findUserByLogin(SecurityContextHolder.getContext().getAuthentication().getName());
         if(!Objects.equals(user.getRole(), "admin")){
-            if (user.getId().equals(id)){
+            if (!user.getId().equals(id)){
                 return new ResponseEntity<>(new AppError("You are not this user",
                         HttpStatus.FORBIDDEN.value()), HttpStatus.FORBIDDEN);
             }
@@ -138,7 +138,7 @@ public class UserController {
         logger.info("get request to /user/myEvents/id");
         User user = userService.findUserByLogin(SecurityContextHolder.getContext().getAuthentication().getName());
         if(!Objects.equals(user.getRole(), "admin")){
-            if (user.getId().equals(userId)){
+            if (!user.getId().equals(userId)){
                 return new ResponseEntity<>(new AppError("You are not this user",
                         HttpStatus.FORBIDDEN.value()), HttpStatus.FORBIDDEN);
             }
@@ -162,7 +162,7 @@ public class UserController {
         logger.info("delete request to /user/deleteEvent");
         User user = userService.findUserByLogin(SecurityContextHolder.getContext().getAuthentication().getName());
         if(!Objects.equals(user.getRole(), "admin")){
-            if (user.getId().equals(userId)){
+            if (!user.getId().equals(userId)){
                 return new ResponseEntity<>(new AppError("You are not this user",
                         HttpStatus.FORBIDDEN.value()), HttpStatus.FORBIDDEN);
             }
