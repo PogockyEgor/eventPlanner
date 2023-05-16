@@ -23,15 +23,13 @@ import java.util.Objects;
 public class EventService {
     EventRepository eventRepository;
     UserRepository userRepository;
-    UserService userService;
     PlaceService placeService;
 
     @Autowired
-    public EventService(EventRepository eventRepository, UserRepository userRepository, UserService userService,
+    public EventService(EventRepository eventRepository, UserRepository userRepository,
                         PlaceService placeService) {
         this.eventRepository = eventRepository;
         this.userRepository = userRepository;
-        this.userService = userService;
         this.placeService = placeService;
     }
 
@@ -76,6 +74,7 @@ public class EventService {
     }
 
     public Event createEvent(EventRequestDto eventRequestDto) {
+        placeService.getPlaceById(eventRequestDto.getPlaceID());
         adminOfPlaceCheck(eventRequestDto.getPlaceID());
         Event event = DtoMapper.fromEventRequestDtoToEvent(eventRequestDto);
         EventDbDto eventDbDto = DtoMapper.fromEventToEventDbDto(event);
@@ -83,8 +82,7 @@ public class EventService {
     }
 
     public Event updateEvent(EventRequestDto eventRequestDto) {
-        eventRepository.findById(eventRequestDto.getId()).orElseThrow(
-                () -> new ObjectNotFoundException("Event with id " + eventRequestDto.getId() + " not found"));
+        placeService.getPlaceById(eventRequestDto.getPlaceID());
         adminOfPlaceCheck(eventRequestDto.getPlaceID());
         Event event = DtoMapper.fromEventRequestDtoToEvent(eventRequestDto);
         EventDbDto eventDbDto = DtoMapper.fromEventToEventDbDto(event);
@@ -109,7 +107,9 @@ public class EventService {
     }
 
     public void adminOfPlaceCheck(int placeId) {
-        User user = userService.findUserByLogin(SecurityContextHolder.getContext().getAuthentication().getName());
+        String login = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByLogin(login).orElseThrow(
+                () -> new ObjectNotFoundException("Don't find user in secure context"));
         if (!Objects.equals(user.getRole(), "admin")) {
             if (user.getId() != placeService.getAdminOfPlace(placeId)) {
                 throw new ForbiddenContentException("You are not admin of this place");

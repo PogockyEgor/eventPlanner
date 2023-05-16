@@ -36,11 +36,6 @@ public class PlaceController {
     public ResponseEntity<?> getPlace(@PathVariable int id) {
         logger.info("get request to /place/id");
         Place place = placeService.getPlaceById(id);
-        if (place == null) {
-            logger.warn("Place with id = " + id + " not found");
-            return new ResponseEntity<>(new AppError("place with id = " + id + " not found",
-                    HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND);
-        }
         return new ResponseEntity<>(place, HttpStatus.OK);
     }
 
@@ -48,65 +43,30 @@ public class PlaceController {
     public ResponseEntity<?> getAllPlaces() {
         logger.info("get request to /place");
         ArrayList<Place> allPlaces = placeService.getAllPlaces();
-        if (allPlaces.isEmpty()) {
-            return new ResponseEntity<>(new AppError("Don't found any places",
-                    HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND);
-        }
         return new ResponseEntity<>(allPlaces, HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<?> addPlace(@RequestBody @Valid Place place) {
         logger.info("post request to /place");
-        if (placeService.createPlace(place) == null) {
-            return new ResponseEntity<>(new AppError("Place was not created",
-                    HttpStatus.NO_CONTENT.value()), HttpStatus.NO_CONTENT);
-        }
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(placeService.createPlace(place), HttpStatus.CREATED);
     }
 
     @PutMapping
     public ResponseEntity<?> updatePlace(@RequestBody @Valid Place place) {
         logger.info("put request to /place");
-        User user = userService.findUserByLogin(SecurityContextHolder.getContext().getAuthentication().getName());
-        if (!Objects.equals(user.getRole(), "admin")) {
-            if (user.getId() != placeService.getAdminOfPlace(place.getId())) {
-                return new ResponseEntity<>(new AppError("You are not admin of this place",
-                        HttpStatus.FORBIDDEN.value()), HttpStatus.FORBIDDEN);
-            }
-        }
-        if (placeService.getPlaceById(place.getId()) == null) {
-            return new ResponseEntity<>(
-                    new AppError("Place with id = " + place.getId() + " not found", HttpStatus.NOT_FOUND.value()),
-                    HttpStatus.NOT_FOUND);
-        }
         return new ResponseEntity<>(placeService.updatePlace(place), HttpStatus.OK);
     }
 
     @PutMapping("/admin")
     public ResponseEntity<?> appointAdmin(@RequestParam int placeId, @RequestParam int userId) {
         logger.info("put request to /place/admin");
-        if (placeService.getPlaceById(placeId) == null) {
-            return new ResponseEntity<>(
-                    new AppError("Place with id = " + placeId + " not found", HttpStatus.NOT_FOUND.value()),
-                    HttpStatus.NOT_FOUND);
-        }
-        if (userService.getUserById(userId) == null) {
-            return new ResponseEntity<>(
-                    new AppError("User with id = " + userId + "not found", HttpStatus.NOT_FOUND.value()),
-                    HttpStatus.NOT_FOUND);
-        }
         placeService.appointAdmin(userId, placeId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePlace(@PathVariable int id) {
-        if (placeService.getPlaceById(id) == null) {
-            return new ResponseEntity<>(
-                    new AppError("Place with id = " + id + " not found", HttpStatus.NOT_FOUND.value()),
-                    HttpStatus.NOT_FOUND);
-        }
         placeService.deletePlace(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

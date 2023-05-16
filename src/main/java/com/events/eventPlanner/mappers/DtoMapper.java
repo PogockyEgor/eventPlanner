@@ -32,6 +32,7 @@ public class DtoMapper {
         eventDbDto.setDate(event.getDate());
         PlaceDbDto placeDbDto = new PlaceDbDto();
         placeDbDto.setId(event.getPlace().getId());
+        placeDbDto.setName(event.getPlace().getName());
         placeDbDto.setDescription(event.getPlace().getDescription());
         placeDbDto.setDistrict(event.getPlace().getDistrict());
         placeDbDto.setAddress(event.getPlace().getAddress());
@@ -105,13 +106,13 @@ public class DtoMapper {
 
     public static Event fromEventRequestDtoToEvent(EventRequestDto eventRequestDto) {
         Event event = new Event();
-        event.setId(eventRequestDto.getId());
         event.setName(eventRequestDto.getName());
         event.setDescription(eventRequestDto.getDescription());
         event.setDate(eventRequestDto.getDate());
         PlaceDbDto placeDbDto = placeRepository.findById(eventRequestDto.getPlaceID()).orElseThrow();
         Place place = new Place();
         place.setId(placeDbDto.getId());
+        place.setName(placeDbDto.getName());
         place.setAddress(placeDbDto.getAddress());
         place.setDistrict(placeDbDto.getDistrict());
         place.setDescription(placeDbDto.getDescription());

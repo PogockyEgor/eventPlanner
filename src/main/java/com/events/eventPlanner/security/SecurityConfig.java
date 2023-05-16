@@ -25,10 +25,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.csrf().disable()
                 .authorizeHttpRequests()
+                .requestMatchers(HttpMethod.POST, "/user").permitAll()
                 .requestMatchers(HttpMethod.GET, "/user/{id}").hasAnyRole("user", "placeAdmin", "admin")
                 .requestMatchers(HttpMethod.GET, "/user").hasRole("admin")
                 .requestMatchers(HttpMethod.GET, "/user/myEvents/**").hasAnyRole("user", "admin")
-                .requestMatchers(HttpMethod.POST, "/user").permitAll()
                 .requestMatchers(HttpMethod.POST, "/user/addEvent/**").hasAnyRole("user", "admin")
                 .requestMatchers(HttpMethod.PUT, "/user").hasAnyRole("user", "placeAdmin", "admin")
                 .requestMatchers(HttpMethod.DELETE, "/user/deleteEvent").hasAnyRole("user", "admin")
