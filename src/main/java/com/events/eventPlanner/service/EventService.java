@@ -26,8 +26,7 @@ public class EventService {
     PlaceService placeService;
 
     @Autowired
-    public EventService(EventRepository eventRepository, UserRepository userRepository,
-                        PlaceService placeService) {
+    public EventService(EventRepository eventRepository, UserRepository userRepository, PlaceService placeService) {
         this.eventRepository = eventRepository;
         this.userRepository = userRepository;
         this.placeService = placeService;
@@ -42,13 +41,13 @@ public class EventService {
     }
 
     public ArrayList<Event> getAllEvents() {
-        ArrayList<EventDbDto> eventDbDtos = (ArrayList<EventDbDto>) eventRepository.findAll();
+        ArrayList<EventDbDto> eventsDbDto = (ArrayList<EventDbDto>) eventRepository.findAll();
         ArrayList<Event> events = new ArrayList<>();
-        for (EventDbDto e : eventDbDtos) {
+        for (EventDbDto e : eventsDbDto) {
             events.add(DtoMapper.fromEventDbDtoToEvent(e));
         }
         if (events.isEmpty()) {
-            throw new ObjectNotFoundException("don't find any events");
+            throw new ObjectNotFoundException("Don't find any events");
         }
         return events;
     }
@@ -102,7 +101,7 @@ public class EventService {
     public void deletePastEvents() {
         int result = eventRepository.deletePastEvents();
         if (result == 0) {
-            throw new ObjectNotFoundException("don't find pasts events");
+            throw new ObjectNotFoundException("Don't find pasts events");
         }
     }
 

@@ -1,35 +1,36 @@
 package com.events.eventPlanner.controllers;
 
 import com.events.eventPlanner.domain.Place;
-import com.events.eventPlanner.domain.User;
-import com.events.eventPlanner.exceptions.AppError;
 import com.events.eventPlanner.service.PlaceService;
-import com.events.eventPlanner.service.UserService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/place")
 public class PlaceController {
 
     PlaceService placeService;
-    UserService userService;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    public PlaceController(PlaceService placeService, UserService userService) {
+    public PlaceController(PlaceService placeService) {
         this.placeService = placeService;
-        this.userService = userService;
     }
 
     @GetMapping("/{id}")
@@ -67,7 +68,8 @@ public class PlaceController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePlace(@PathVariable int id) {
+        logger.info("delete request to /place");
         placeService.deletePlace(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

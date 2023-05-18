@@ -66,12 +66,12 @@ public class UserService {
         return events;
     }
 
-    public User createUser(User user) {
+    public void createUser(User user) {
         user.setCreated(new Date(System.currentTimeMillis()));
         user.setEdited(new Date(System.currentTimeMillis()));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole("user");
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
     @Transactional
@@ -109,7 +109,9 @@ public class UserService {
         eventRepository.findById(eventId).orElseThrow(
                 () -> new ObjectNotFoundException("Don't find event with id: " + eventId));
         checkPermission(userId);
-        userRepository.deleteEventFromUser(eventId, userId);
+        if (userRepository.deleteEventFromUser(eventId, userId)==0){
+            throw new ObjectNotFoundException("You are not registered for this event");
+        }
     }
 
     public void checkPermission(int id) {

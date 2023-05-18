@@ -58,7 +58,8 @@ public class UserController {
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody @Valid User user) {
         logger.info("post request to /user");
-        return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
+        userService.createUser(user);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PostMapping("/addEvent")
@@ -77,6 +78,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable int id) {
+        logger.info("delete request to /user");
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }

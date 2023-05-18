@@ -1,6 +1,7 @@
 package com.events.eventPlanner.security;
 
 import com.events.eventPlanner.domain.User;
+import com.events.eventPlanner.exceptions.ObjectNotFoundException;
 import com.events.eventPlanner.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,7 +21,8 @@ public class CustomUserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        User user = userRepository.findByLogin(login).orElseThrow();//() -> new UsernameNotFoundException(username)
+        User user = userRepository.findByLogin(login).orElseThrow(
+                () -> new ObjectNotFoundException("Don't find user with this login"));
         UserDetails securityUser = org.springframework.security.core.userdetails.User
                 .builder()
                 .username(user.getLogin())

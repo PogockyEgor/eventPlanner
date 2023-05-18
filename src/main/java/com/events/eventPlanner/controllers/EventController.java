@@ -5,8 +5,6 @@ import com.events.eventPlanner.domain.DTO.EventResponseDto;
 import com.events.eventPlanner.domain.DTO.UserResponseDto;
 import com.events.eventPlanner.domain.Event;
 import com.events.eventPlanner.service.EventService;
-import com.events.eventPlanner.service.PlaceService;
-import com.events.eventPlanner.service.UserService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,16 +27,12 @@ import java.util.ArrayList;
 public class EventController {
 
     EventService eventService;
-    UserService userService;
-    PlaceService placeService;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    public EventController(EventService eventService, UserService userService, PlaceService placeService) {
+    public EventController(EventService eventService) {
         this.eventService = eventService;
-        this.userService = userService;
-        this.placeService = placeService;
     }
 
     @GetMapping("/{id}")
